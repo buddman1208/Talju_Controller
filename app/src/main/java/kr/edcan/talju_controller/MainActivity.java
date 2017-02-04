@@ -8,19 +8,39 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import app.akexorcist.bluetotohspp.library.BluetoothSPP;
 import app.akexorcist.bluetotohspp.library.BluetoothState;
 
 public class MainActivity extends AppCompatActivity {
-    MediaPlayer audio_play;
     BluetoothSPP bt;
-
+    Button button;
+    TextView currentStatus;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setTitle("");
+        setContentView(R.layout.activity_main);
+        setDefault();
+        setBluetoothConfig();
+    }
+
+    private void setDefault() {
+        button = (Button) findViewById(R.id.start);
+        currentStatus = (TextView) findViewById(R.id.currentStatus);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bt.send("a", true);
+                currentStatus.setText(bt.getConnectedDeviceName() + "에 명령을 전송했습니다");
+            }
+        });
+    }
+
+    private void setBluetoothConfig() {
         bt = new BluetoothSPP(this);
         if (!bt.isBluetoothAvailable()) {
             Toast.makeText(getApplicationContext(), "블루투스를 켜주세요", Toast.LENGTH_SHORT).show();
@@ -31,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDeviceConnected(String name, String address) {
                 Toast.makeText(getApplicationContext(), "연결되었습니다", Toast.LENGTH_SHORT).show();
             }
+
             public void onDeviceDisconnected() {
                 Toast.makeText(getApplicationContext(), "연결이끊겼습니다", Toast.LENGTH_SHORT).show();
             }
@@ -47,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     public void onStart() {
         super.onStart();
         if (!bt.isBluetoothEnabled()) {
@@ -61,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setup() {
-        bt.autoConnect("haejukwang");
+        bt.autoConnect("Nexus");
     }
 
 
